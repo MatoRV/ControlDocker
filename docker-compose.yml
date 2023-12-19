@@ -1,0 +1,33 @@
+version: "3.8"
+services:
+  mysql:
+    image: mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: appdb
+      MYSQL_ROOT_PASSWORD: control1234
+      MYSQL_USER: nodeUser
+      MYSQL_PASSWORD: nodePassword
+      MYSQL_PORT: 3310
+    volumes:
+      - "./data:/var/lib/mysql"
+    ports:
+      - "3310:3310"
+  node:
+    depends_on:
+      - mysql
+    image: node
+    user: node
+    restart: unless-stopped
+    ports:
+      - "8080:3000"
+    environment:
+      DB_HOST: mysql
+      DB_USER: nodeUser
+      DB_PASSWORD: nodePassword
+      DB_NAME: appdb
+      DB_PORT: localhost:3310
+    volumes:
+      - "./www:/home/node/app"
+    stdin_open: true
+    tty: true
